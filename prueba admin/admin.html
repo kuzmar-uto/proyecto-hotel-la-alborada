@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hotel Kuzmar - Gestión de Habitaciones</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #1e40af;       /* azul profundo */
+      --primary-dark: #1e3a8a;
+      --accent: #d97706;         /* dorado cálido */
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --text-light: #64748b;
+      --border: #e2e8f0;
+      --danger: #dc2626;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 2rem 1rem;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    header h1 {
+      font-size: 2.1rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    header p {
+      opacity: 0.9;
+      font-weight: 300;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2.5rem auto;
+      padding: 0 1rem;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+      margin-bottom: 2.5rem;
+    }
+
+    .card-header {
+      background: #f1f5f9;
+      padding: 1.25rem 1.75rem;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .form-section .card-header { color: var(--text); }
+
+    .card-body {
+      padding: 1.75rem;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.4rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-size: 0.92rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: #334155;
+    }
+
+    input, select, textarea {
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(30,64,175,0.15);
+    }
+
+    textarea { min-height: 90px; resize: vertical; }
+
+    .btn {
+      padding: 0.85rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      grid-column: span 2;
+    }
+
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover { background: #b91c1c; }
+
+    .btn-edit {
+      background: #0891b2;
+      color: white;
+    }
+
+    .btn-edit:hover { background: #0e7490; }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      padding: 1rem 1.25rem;
+      text-align: left;
+    }
+
+    thead th {
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+    tr {
+      transition: background 0.2s;
+    }
+
+    tr:nth-child(even) { background: #f8fafc; }
+    tr:hover { background: #f1f5f9; }
+
+    .actions {
+      display: flex;
+      gap: 0.6rem;
+    }
+
+    .mensaje {
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .error   { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+    @media (max-width: 768px) {
+      form { grid-template-columns: 1fr; }
+      .btn-primary { grid-column: span 1; }
+      .card-body { padding: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Hotel Kuzmar</h1>
+  <p>Panel de Administración de Habitaciones</p>
+</header>
+
+<div class="container">
+
+  <div class="card form-section">
+    <div class="card-header">
+      <i class="fas fa-bed"></i> Agregar / Editar Habitación
+    </div>
+    <div class="card-body">
+      <form id="formHabitacion">
+        <input type="hidden" id="habitacionId">
+
+        <div class="form-group">
+          <label for="numero">Número de Habitación *</label>
+          <input type="text" id="numero" required placeholder="Ej: 101, 205">
+        </div>
+
+        <div class="form-group">
+          <label for="tipo">Tipo de Habitación *</label>
+          <select id="tipo" required>
+            <option value="">Selecciona tipo...</option>
+            <option value="Individual">Individual</option>
+            <option value="Doble">Doble</option>
+            <option value="Triple">Triple</option>
+            <option value="Suite">Suite</option>
+            <option value="Familiar">Familiar</option>
+            <option value="Junior Suite">Junior Suite</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="capacidad">Capacidad máxima *</label>
+          <input type="number" id="capacidad" min="1" max="12" required placeholder="Ej: 2">
+        </div>
+
+        <div class="form-group">
+          <label for="precio">Precio por noche (COP) *</label>
+          <input type="number" id="precio" step="1000" min="0" required placeholder="Ej: 250000">
+        </div>
+
+        <div class="form-group">
+          <label for="estado">Estado actual</label>
+          <select id="estado">
+            <option value="Disponible">Disponible</option>
+            <option value="Ocupada">Ocupada</option>
+            <option value="Mantenimiento">Mantenimiento</option>
+            <option value="Reservada">Reservada</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="grid-column: 1 / -1;">
+          <label for="descripcion">Descripción / Servicios incluidos</label>
+          <textarea id="descripcion" rows="3" placeholder="Aire acondicionado, WiFi gratis, minibar, TV cable, caja fuerte..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i> Guardar Habitación
+        </button>
+      </form>
+
+      <div id="mensaje" class="mensaje" style="display:none;"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <i class="fas fa-list"></i> Listado de Habitaciones
+    </div>
+    <div class="card-body">
+      <table id="tablaHabitaciones">
+        <thead>
+          <tr>
+            <th>Nº Hab.</th>
+            <th>Tipo</th>
+            <th>Capacidad</th>
+            <th>Precio/Noche</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="cuerpoTabla"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ──────────────────────────────────────────────
+const DB_KEY = 'hotel_kuzmar_habitaciones';
+let habitaciones = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+
+const form = document.getElementById('formHabitacion');
+const tablaBody = document.getElementById('cuerpoTabla');
+const mensajeDiv = document.getElementById('mensaje');
+
+function cargarHabitaciones() {
+  tablaBody.innerHTML = '';
+  habitaciones.forEach((hab, index) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><strong>${hab.numero}</strong></td>
+      <td>${hab.tipo}</td>
+      <td>${hab.capacidad} pers.</td>
+      <td>$${parseFloat(hab.precio).toLocaleString('es-CO')}</td>
+      <td>
+        <span style="padding:4px 10px;border-radius:20px;font-size:0.85rem;background:${getEstadoColor(hab.estado)};color:white;">
+          ${hab.estado}
+        </span>
+      </td>
+      <td class="actions">
+        <button class="btn btn-edit" onclick="editarHabitacion(${index})"><i class="fas fa-edit"></i> Editar</button>
+        <button class="btn btn-danger" onclick="eliminarHabitacion(${index})"><i class="fas fa-trash"></i> Eliminar</button>
+      </td>
+    `;
+    tablaBody.appendChild(row);
+  });
+}
+
+function getEstadoColor(estado) {
+  const colores = {
+    'Disponible': '#16a34a',
+    'Ocupada': '#dc2626',
+    'Mantenimiento': '#d97706',
+    'Reservada': '#7c3aed'
+  };
+  return colores[estado] || '#6b7280';
+}
+
+function guardarDB() {
+  localStorage.setItem(DB_KEY, JSON.stringify(habitaciones));
+}
+
+function mostrarMensaje(texto, tipo = 'success') {
+  mensajeDiv.textContent = texto;
+  mensajeDiv.className = `mensaje ${tipo}`;
+  mensajeDiv.style.display = 'block';
+  setTimeout(() => mensajeDiv.style.display = 'none', 4500);
+}
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const id = document.getElementById('habitacionId').value;
+  const nuevaHab = {
+    numero: document.getElementById('numero').value.trim(),
+    tipo: document.getElementById('tipo').value,
+    capacidad: parseInt(document.getElementById('capacidad').value),
+    precio: parseFloat(document.getElementById('precio').value),
+    estado: document.getElementById('estado').value,
+    descripcion: document.getElementById('descripcion').value.trim()
+  };
+
+  if (!nuevaHab.numero || !nuevaHab.tipo || !nuevaHab.capacidad || !nuevaHab.precio) {
+    mostrarMensaje('Por favor completa los campos obligatorios', 'error');
+    return;
+  }
+
+  if (id === '') {
+    habitaciones.push(nuevaHab);
+    mostrarMensaje('Habitación agregada exitosamente');
+  } else {
+    habitaciones[parseInt(id)] = nuevaHab;
+    mostrarMensaje('Habitación actualizada correctamente');
+  }
+
+  guardarDB();
+  cargarHabitaciones();
+  form.reset();
+  document.getElementById('habitacionId').value = '';
+});
+
+function editarHabitacion(index) {
+  const hab = habitaciones[index];
+  document.getElementById('habitacionId').value = index;
+  document.getElementById('numero').value = hab.numero;
+  document.getElementById('tipo').value = hab.tipo;
+  document.getElementById('capacidad').value = hab.capacidad;
+  document.getElementById('precio').value = hab.precio;
+  document.getElementById('estado').value = hab.estado;
+  document.getElementById('descripcion').value = hab.descripcion || '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function eliminarHabitacion(index) {
+  if (confirm('¿Seguro que deseas eliminar esta habitación?')) {
+    habitaciones.splice(index, 1);
+    guardarDB();
+    cargarHabitaciones();
+    mostrarMensaje('Habitación eliminada', 'success');
+  }
+}
+
+// Inicio
+cargarHabitaciones();
+</script>
+
+</body>
+</html>

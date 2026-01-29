@@ -10,11 +10,12 @@ if ($id <= 0) {
     exit;
 }
 
-$sql = "DELETE FROM tipos_habitacion WHERE id = $id";
+$sql = "DELETE FROM habitaciones WHERE id_habitacion = $id";
+
 if ($conn->query($sql)) {
     echo json_encode(["success" => true]);
 } else {
     echo json_encode(["success" => false, "error" => $conn->error]);
 }
+
 $conn->close();
-?>
